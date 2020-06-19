@@ -1,5 +1,6 @@
 module Music.Pulse
   ( Osc
+  , adsr
   , pulse
   , sinPulse
   )
@@ -13,16 +14,27 @@ pulse :: Osc -> Semitones -> Beats -> [Pulse]
 pulse osc n beats = osc (diatonic n) (beats * beatDuration)
 
 
-sinPulse :: Osc
-sinPulse hz duration = zipWith3 (\x y z -> x * y * z) release attack output
+adsr :: [Pulse] -> [Pulse]
+adsr xs = zipWith3 (\a d x -> a * d * x) attack decay
+  $ zipWith3 (\s r x -> s * r * x) sustain release xs
  where
-  step = (hz * 2 * pi) / sampleRate
-
   attack :: [Pulse]
   attack = map (min 1.0) [0.0, 0.01 ..]
 
+  decay :: [Pulse] -- TODO
+  decay = map (const 1) [1 ..]
+
+  sustain :: [Pulse] -- TODO
+  sustain = map (const 1) [1 ..]
+
   release :: [Pulse]
-  release = reverse $ take (length output) attack
+  release = reverse $ take (length xs) attack
+
+
+sinPulse :: Osc
+sinPulse hz duration = adsr output
+ where
+  step = (hz * 2 * pi) / sampleRate
 
   output :: [Pulse]
   output = map (\x -> sin (step * x) * volume) [0.0 .. sampleRate * duration]
