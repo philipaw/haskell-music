@@ -52,7 +52,6 @@ diatonicOctavePower = 2 -- eg. 440hz = A4, 880hz = A5
 diatonic :: Semitones -> Hz
 diatonic = tuning pitchStandard diatonicOctavePower diatonicOctavesPerSemitone
 
-
 tuning :: Hz -> Float -> Float -> Semitones -> Hz
 tuning standard octavePower octavesPerSemitone n =
   pitchStandard * (diatonicOctavePower ** octavesPerSemitone) ** n
