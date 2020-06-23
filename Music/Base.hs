@@ -8,12 +8,13 @@ module Music.Base
   , bpm
   , beatDuration
   , diatonic
-  , diatonicSemitonesInOctave
   , diatonicSemitonesPerOctave
+  , diatonicOctavesPerSemitone
   , diatonicOctavePower
   , volume
   , sampleRate
   , pitchStandard
+  , tuning
   )
 where
 
@@ -39,15 +40,19 @@ sampleRate = 48000.0
 pitchStandard :: Hz
 pitchStandard = 440.0
 
-diatonicSemitonesInOctave :: Semitones
-diatonicSemitonesInOctave = 11.0
-
 diatonicSemitonesPerOctave :: Semitones
-diatonicSemitonesPerOctave = 1 / (11.0 + 1)
+diatonicSemitonesPerOctave = 11.0
+
+diatonicOctavesPerSemitone :: Float
+diatonicOctavesPerSemitone = 1 / (11.0 + 1)
 
 diatonicOctavePower :: Float
 diatonicOctavePower = 2 -- eg. 440hz = A4, 880hz = A5
 
 diatonic :: Semitones -> Hz
-diatonic n =
-  pitchStandard * (diatonicOctavePower ** diatonicSemitonesPerOctave) ** n
+diatonic = tuning pitchStandard diatonicOctavePower diatonicOctavesPerSemitone
+
+
+tuning :: Hz -> Float -> Float -> Semitones -> Hz
+tuning standard octavePower octavesPerSemitone n =
+  pitchStandard * (diatonicOctavePower ** octavesPerSemitone) ** n

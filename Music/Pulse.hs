@@ -3,6 +3,7 @@ module Music.Pulse
   , adsr
   , pulse
   , sinPulse
+  , squarePulse
   )
 where
 
@@ -38,4 +39,15 @@ sinPulse hz duration = adsr output
 
   output :: [Pulse]
   output = map (\x -> sin (step * x) * volume) [0.0 .. sampleRate * duration]
+
+-- sawPulse
+squarePulse :: Osc
+squarePulse hz duration = adsr output
+  where
+    step = (hz * 2 * pi) / sampleRate
+
+    output :: [Pulse]
+    output = map (\x -> if sin (step * x) > 0 then volume else (-1) * volume) [0.0 .. sampleRate * duration]
+
+-- trianglePulse
 

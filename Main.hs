@@ -14,7 +14,7 @@ outputFilePath = "output.bin"
 save :: Song -> IO ()
 save song =
   B.writeFile "output.bin" $ B.toLazyByteString $ foldMap B.floatLE $ foldMap
-    (uncurry $ pulse sinPulse)
+    (uncurry $ pulse squarePulse)
     song
 
 play :: IO ()
